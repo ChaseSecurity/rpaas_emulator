@@ -3,10 +3,10 @@
 
 FROM ubuntu
 
-MAINTAINER tracer0tong <yuriy.leonychev@gmail.com>
+MAINTAINER xianghang <xianghangmi@gmail.com>
 
 # Specially for SSH access and port redirection
-ENV ROOTPASSWORD android
+ENV ROOTPASSWORD rpaas
 
 # Expose ADB, ADB control and VNC ports
 EXPOSE 22
@@ -28,9 +28,11 @@ RUN apt-get -y update && \
     apt-get update && \
     apt-get -y install oracle-java8-installer && \
     rm -rf /var/lib/apt/lists/*
-
+# install kvm
+RUN apt-get -y update && \
+    apt-get -y install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils
 # Install android sdk
-RUN wget -qO- http://dl.google.com/android/android-sdk_r23-linux.tgz | \
+RUN wget -qO- http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz | \
     tar xvz -C /usr/local/ && \
     mv /usr/local/android-sdk-linux /usr/local/android-sdk && \
     chown -R root:root /usr/local/android-sdk/
@@ -45,9 +47,10 @@ ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 
 # Install latest android tools and system images
 RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --force -a --filter \
-    platform-tool,android-19,android-21,android-22,build-tools-22.0.1,sys-img-x86-android-19,sys-img-x86-android-21,sys-img-x86-android-22,sys-img-armeabi-v7a-android-19,sys-img-armeabi-v7a-android-21,sys-img-armeabi-v7a-android-22 && \
-    echo "y" | android update adb
+    2,4,android-25,android-28,sys-img-armeabi-v7a-google_apis-25,sys-img-armeabi-v7a-google_apis-28,sys-img-x86-google_apis-25,sys-img-x86-google_apis-28
 
+
+# echo "y" | android update adb
 # Create fake keymap file
 RUN mkdir /usr/local/android-sdk/tools/keymaps && \
     touch /usr/local/android-sdk/tools/keymaps/en-us
