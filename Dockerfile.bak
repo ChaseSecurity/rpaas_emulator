@@ -24,7 +24,9 @@ RUN echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set
 # Update packages
 RUN apt-get -y update && \
     apt-get -y install software-properties-common bzip2 ssh net-tools openssh-server socat curl && \
-    apt-get install -y --no-install-recommends openjdk-8-jdk &&  \
+    add-apt-repository ppa:webupd8team/java && \
+    apt-get update && \
+    apt-get -y install oracle-java8-installer && \
     rm -rf /var/lib/apt/lists/*
 # install kvm
 RUN apt-get -y update && \
@@ -38,36 +40,20 @@ RUN mkdir -p ${ANDROID_HOME} && cd ${ANDROID_HOME} && \
     wget -q https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_VERSION}.zip && \
     unzip *tools*linux*.zip && \
     rm *tools*linux*.zip
-#RUN wget -qO- http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz | \
-#    tar xvz -C /usr/local/ && \
-#    mv /usr/local/android-sdk-linux /usr/local/android-sdk && \
-#    chown -R root:root /usr/local/android-sdk/
-# ENV ANDROID_HOME /usr/local/android-sdk
 
 # Add android tools and platform tools to PATH
-# set the environment variables
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-arm64
 ENV PATH $PATH:$ANDROID_HOME/tools
-ENV PATH $PATH:$ANDROID_HOME/tools/bin
+ENV PATH $PATH:$ANDROID_HOME/platform-tools
 
-RUN apt-get -y install libswt-gtk-3-java
-ENV ANDROID_SWT /usr/share/java/
+# Export JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 
 # Install latest android tools and system images
-RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
-    sdkmanager --install \
-    "platform-tools" \
-    "platforms;android-25" \
-    #"platforms;android-28" \
-    #"system-images;android-28;google_apis;armeabi-v7a" \
-    "system-images;android-25;google_apis;armeabi-v7a"
-RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
-    sdkmanager --install \
-    "emulator"
-ENV PATH $PATH:$ANDROID_HOME/tools/platform-tools
+RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --force -a --filter \
+    2,4,android-25,android-28,sys-img-armeabi-v7a-google_apis-25,sys-img-armeabi-v7a-google_apis-28,sys-img-x86-google_apis-25,sys-img-x86-google_apis-28
 
 
-#RUN echo "y" | android update adb
+# echo "y" | android update adb
 # Create fake keymap file
 RUN mkdir /usr/local/android-sdk/tools/keymaps && \
     touch /usr/local/android-sdk/tools/keymaps/en-us

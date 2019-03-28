@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $EMULATOR == "" ]]; then
-    EMULATOR="android-25"
+    EMULATOR="system-images;android-25;google_apis;armeabi-v7a"
     echo "Using default emulator $EMULATOR"
 fi
 
@@ -39,5 +39,5 @@ else
     EMU="arm"
 fi
 
-echo "no" | /usr/local/android-sdk/tools/android create avd -f -n test -t ${EMULATOR} --abi ${ARCH}
-echo "no" | /usr/local/android-sdk/tools/emulator64-x86 -avd test -noaudio -no-window -gpu off -verbose $FORCE_32 -qemu -usbdevice tablet -vnc :0
+echo "no" | /usr/local/android-sdk/tools/bin/avdmanager create avd -f -n test -k ${EMULATOR} --abi ${ARCH}
+echo "no" | /usr/local/android-sdk/emulator/emulator64-arm -avd test -noaudio -no-window -gpu off -verbose $FORCE_32 -qemu -usbdevice tablet -vnc :0
