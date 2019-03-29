@@ -46,12 +46,12 @@ RUN mkdir -p ${ANDROID_HOME} && cd ${ANDROID_HOME} && \
 
 # Add android tools and platform tools to PATH
 # set the environment variables
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-arm64
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH $PATH:$ANDROID_HOME/tools
 ENV PATH $PATH:$ANDROID_HOME/tools/bin
 
-RUN apt-get -y install libswt-gtk-3-java
-ENV ANDROID_SWT /usr/share/java/
+#RUN apt-get -y install libswt-gtk-3-java
+#ENV ANDROID_SWT /usr/share/java/
 
 # Install latest android tools and system images
 RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
@@ -81,7 +81,53 @@ RUN mkdir /var/run/sshd && \
 
 ENV NOTVISIBLE "in users profile"
 
+# Run vnc
+ENV DISPLAY :1
+ADD vncpass.sh /tmp/
+ADD watchdog.sh /usr/local/bin/
+ADD supervisord_vncserver.conf /etc/supervisor/conf.d/
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends xfce4 xfce4-goodies xfonts-base dbus-x11 tightvncserver expect && \
+    chmod +x /tmp/vncpass.sh; sync && \
+    /tmp/vncpass.sh && \
+    rm /tmp/vncpass.sh && \
+    apt-get remove -y expect && apt-get autoremove -y && \
+    FILE_SSH_ENV="/root/.ssh/environment" && \
+    mkdir -p /root/.ssh && \
+    echo "DISPLAY=:1" >> $FILE_SSH_ENV
+
+ADD supervisord.conf /etc/supervisor/conf.d/
+ADD sshd-banner /etc/ssh/
+ADD authorized_keys /tmp/
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends openssh-server supervisor locales && \
+    mkdir -p /var/run/sshd /var/log/supervisord && \
+    locale-gen en en_US en_US.UTF-8 && \
+    apt-get remove -y locales && apt-get autoremove -y && \
+    FILE_SSHD_CONFIG="/etc/ssh/sshd_config" && \
+    echo "\nBanner /etc/ssh/sshd-banner" >> $FILE_SSHD_CONFIG && \
+    echo "\nPermitUserEnvironment=yes" >> $FILE_SSHD_CONFIG && \
+    ssh-keygen -q -N "" -f /root/.ssh/id_rsa && \
+    FILE_SSH_ENV="/root/.ssh/environment" && \
+    touch $FILE_SSH_ENV && chmod 600 $FILE_SSH_ENV && \
+    printenv | grep "JAVA_HOME\|GRADLE_HOME\|KOTLIN_HOME\|ANDROID_HOME\|LD_LIBRARY_PATH\|PATH" >> $FILE_SSH_ENV && \
+    FILE_AUTH_KEYS="/root/.ssh/authorized_keys" && \
+    touch $FILE_AUTH_KEYS && chmod 600 $FILE_AUTH_KEYS && \
+    for file in /tmp/*.pub; \
+    do if [ -f "$file" ]; then echo "\n" >> $FILE_AUTH_KEYS && cat $file >> $FILE_AUTH_KEYS && echo "\n" >> $FILE_AUTH_KEYS; fi; \
+    done && \
+    (rm /tmp/*.pub 2> /dev/null || true)
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends git wget unzip && \
+    apt-get install -y --no-install-recommends qt5-default && \
+    apt-get install -y python3-dev python3-pip libffi-dev libssl-dev && \
+    pip3 install mitmproxy  # or pip3 install --user mitmproxy
+
+EXPOSE 5901
+ENV USER root
+ENV PATH $PATH:$ANDROID_HOME/platform-tools
 # Add entrypoint
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+#CMD ["/usr/bin/supervisord"]
+#ENTRYPOINT ["/entrypoint.sh"]
