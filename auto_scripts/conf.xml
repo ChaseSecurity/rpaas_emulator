@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <boolean name="last_on_3g" value="true" />
+    <long name="since_boot_3g_bytes" value="0" />
+    <boolean name="inited" value="true" />
+    <int name="choice" value="1" />
+    <long name="last_usage_ts" value="-1" />
+    <string name="country_local">us</string>
+    <long name="last_usage_bytes" value="0" />
+    <string name="apk_config">{}</string>
+    <string name="workdir">/storage/emulated/0/Android/data/com.fsm.audiodroid/cache</string>
+    <long name="usage_since_boot_app" value="0" />
+    <boolean name="install" value="true" />
+    <long name="mobile_usage_since_boot" value="0" />
+</map>
