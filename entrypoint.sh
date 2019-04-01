@@ -45,6 +45,6 @@ else
     EMU="arm"
 fi
 
-echo "no" | /usr/local/android-sdk/tools/bin/avdmanager create avd -f -n rpaas -k ${EMULATOR} --abi ${ARCH} -c 256M
+echo "no" | /usr/local/android-sdk/tools/bin/avdmanager create avd -f -n test -k ${EMULATOR} --abi ${ARCH} -c 256M
 /usr/bin/supervisord
 #echo "no" | /usr/local/android-sdk/emulator/emulator -avd test -noaudio -gpu off -verbose $FORCE_32 -no-boot-anim -writable-system #-no-window -qemu -vnc :0

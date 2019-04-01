@@ -128,6 +128,7 @@ ENV USER root
 ENV PATH $PATH:$ANDROID_HOME/platform-tools
 # Add entrypoint
 ADD entrypoint.sh /entrypoint.sh
+ADD start_avd.sh /start_avd.sh
 RUN chmod +x /entrypoint.sh
 #CMD ["/usr/bin/supervisord"]
-#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
