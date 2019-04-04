@@ -302,11 +302,13 @@ while :;do
   else
 	  echo "likely failed to start the app"
   fi
+  is_done=0
   while :;do
 	  curr_time=$(date +"%s")
 	  time_cost=$(($curr_time - $run_start_time))
 	  if [ $time_cost -gt $time_to_run ];then
 		  echo "it is time to clear up and quit"
+		  is_done=1
 		  break
 	  fi
 	  if [ $(is_boot_complete) -ne 1 ];then
@@ -317,6 +319,11 @@ while :;do
   if [ $(is_boot_complete) -ne 1 ];then
 	echo "reboot again, restart to wait"
 	continue
+  fi
+  if [ $is_done -eq 1 ];then
+	echo "quit because of timeout"
+  else
+	echo "quit because of error or external signal"
   fi
   #adb shell am force-stop $pkg_name
   ## backup logs
