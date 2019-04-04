@@ -261,7 +261,7 @@ while :;do
 	  adb shell mkdir /data/data/$pkg_name/shared_prefs
 	  adb push $script_dir/conf.xml /data/data/$pkg_name/shared_prefs/
 	  adb push $script_dir/conf.xml /data/data/$pkg_name/shared_prefs/topvpn_api.xml
-	  adb shell chown -R $pkg_user:$pkg_user/data/data/$pkg_name/shared_prefs/
+	  adb shell chown -R $pkg_user:$pkg_user /data/data/$pkg_name/shared_prefs
 	  adb shell chmod -R 777 /data/data/$pkg_name/shared_prefs
 	  adb shell chmod -R 660 /data/data/$pkg_name/shared_prefs/conf.xml
 	  adb shell chmod -R 660 /data/data/$pkg_name/shared_prefs/topvpn_api.xml
@@ -275,7 +275,7 @@ while :;do
 	  adb shell mkdir /data/data/$pkg_name/shared_prefs
 	  adb push $script_dir/conf.xml /data/data/$pkg_name/shared_prefs/
 	  adb push $script_dir/conf.xml /data/data/$pkg_name/shared_prefs/topvpn_api.xml
-	  adb shell chown -R $pkg_user:$pkg_user/data/data/$pkg_name/shared_prefs/
+	  adb shell chown -R $pkg_user:$pkg_user /data/data/$pkg_name/shared_prefs
 	  adb shell chmod -R 777 /data/data/$pkg_name/shared_prefs
 	  adb shell chmod -R 660 /data/data/$pkg_name/shared_prefs/conf.xml
 	  adb shell chmod -R 660 /data/data/$pkg_name/shared_prefs/topvpn_api.xml
