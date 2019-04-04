@@ -24,6 +24,7 @@ while :; do
 			-sd script dir
 			-ld log dir
 			-ad apk dir
+			-rt round_tag
 			"
             exit
             ;;
