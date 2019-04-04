@@ -3,10 +3,11 @@
 # start a container 
 container_name="arm_25"
 base_dir=$(cd $(dirname $0); pwd)
-script_dir="$base_dir/rpaas_scripts"
-log_dir="$base_dir/rpaas_logs"
-apk_dir="$base_dir/rpaas_apks"
+script_dir="$base_dir"
+log_dir="~/RPaaS/logs/"
+apk_dir="~/RPaaS/apks"
 docker_image="rpaas:v1"
+round_tag="luminati_$(date +'%Y-%m-%d')"
 is_mitm=0
 is_vpn=0
 is_cellular=0
@@ -14,7 +15,16 @@ is_cellular=0
 while :; do
     case $1 in 
         -h|-\?|--help)
-            echo "help"
+            echo "
+			help\n
+			-ic is_cellular\n
+			-iv is_vpn \n
+			-im is_mitm
+			-cn container name
+			-sd script dir
+			-ld log dir
+			-ad apk dir
+			"
             exit
             ;;
         -ic|--is_cellular)
@@ -53,45 +63,97 @@ while :; do
                 exit
             fi
             ;;
+        -rt|--round_tag):
+            if [ "$2" ];then
+                round_tag=$2
+                shift
+            else
+                "error when parsing arguments"
+                exit
+            fi
+            ;;
+        -ad|--apk_dir):
+            if [ "$2" ];then
+                apk_dir=$2
+                shift
+            else
+                "error when parsing arguments"
+                exit
+            fi
+            ;;
         *)
             break
     esac
     shift
 done
-echo "$container_name, $script_dir, $log_dir"
 if [ ! -e $script_dir ];then
     mkdir -p $script_dir
 fi
 # create and get full-path 
 script_dir=$(cd $script_dir; pwd)
+#log_dir=$log_dir/$(date +'%Y-%m-%d')
 if [ ! -e $log_dir ];then
     mkdir -p $log_dir
 fi
 log_dir=$(cd $log_dir; pwd)
 apk_dir=$(cd $apk_dir; pwd)
+log_direct_dir=$log_dir/$round_tag
+if [ ! -e $log_direct_dir ];then
+    mkdir -p $log_direct_dir
+fi
+echo "container name is $container_name"
+echo "script dir is $script_dir"
+echo "log dir is $log_dir"
+echo "log direct dir is $log_direct_dir"
+echo "apk dir is $apk_dir"
 
-# start the container
-container_id=$(sudo docker run -d -P --privileged --name $container_name \
-    -v $script_dir:/rpaas_scripts \
-    -v $log_dir:/rpaas_logs \
-    -v $apk_dir:/rpaas_apks \
-    $docker_image \
-)
-
+container_id=$(sudo docker ps -q -a -f name=$container_name)
+if [ ${#container_id} -gt 0 ];then
+  echo "container exists, restart it"
+  sudo docker restart $container_id
+else
+  echo "no docker exists, create a new one"
+  # start the container
+  container_id=$(sudo docker run -d -P --privileged \
+	  --name $container_name \
+	  -v $script_dir:/rpaas_scripts \
+	  -v $log_dir:/rpaas_logs \
+	  -v $apk_dir:/rpaas_apks \
+	  $docker_image \
+  )
+fi
+echo "container id is $container_id"
 sleep 30
+while :; do
+  avd_result=$(sudo docker exec -ti $container_id emulator -list-avds)
+  if [ $? -eq 0 ] && [ ${#avd_result} -gt 1 ];then
+	echo "the created avd is $avd_result"
+	break
+  fi
+  echo "wait for the avd to be created"
+  sleep 15
+done
+sleep 10
 
 # run the initiation script in the docker container
-options = " -ttr 80000 " # time to run for the emulator
-if [ $is_cellular ];then
-    options = "$options -ic 1"
+container_log_dir=$log_direct_dir
+options=" -ttr 80000 -ld $container_log_dir " # time to run for the emulator
+if [ $is_cellular -gt 0 ];then
+    options="$options -ic 1"
 fi
-if [ $is_vpn ];then
-    options = "$options -iv 1"
+if [ $is_vpn  -gt 0 ];then
+    options="$options -iv 1"
 fi
-if [ $is_mitm ];then
-    options = "$options -im 1"
+if [ $is_mitm -gt 0 ];then
+    options="$options -im 1"
 fi
-echo "options for in-container script: $options"
-sudo docker exec -ti -w /rpaas_scripts $container_id start_init_in_docker.sh $options 
-sudo docker stop $container_id
+echo "$(date)\tstart_init\t options for in-container script: $options" | tee -a $log_direct_dir/start_init.log
+sudo docker exec -ti -w /rpaas_scripts $container_id ./start_init_in_docker.sh $options 
+# rm vnc server lock
+if [ $? -eq 0 ];then
+  echo "backup and clean the container and emulator"
+  $script_dir/backup_clean_stop.sh -ld $log_dir -rt $round_tag -cn $container_name
+  #sudo docker exec -ti $container_id vncserver -kill :1
+  #sudo docker stop $container_id
+fi
 echo "quit the container"
