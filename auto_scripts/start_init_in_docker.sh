@@ -14,7 +14,8 @@ function is_boot_complete() {
 script_dir="/rpaas_scripts"
 log_dir="/rpaas_logs"
 apk_dir="/rpaas_apks"
-cert_file=$script_dir/b45597f6.0
+#cert_file=$script_dir/b45597f6.0
+cert_file=$script_dir/a2ad153f.0
 pkg_name="com.fsm.audiodroid"
 apk_name="com.fsm.audiodroid_2019-02-08_multiple_script_v2.apk"
 service_name="io.topvpn.vpn_api.svc"
