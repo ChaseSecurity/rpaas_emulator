@@ -18,9 +18,9 @@ while :; do
     case $1 in 
         -h|-\?|--help)
             echo "
-			help\n
-			-ic is_cellular\n
-			-iv is_vpn \n
+			help
+			-ic is_cellular
+			-iv is_vpn
 			-im is_mitm
 			-cn container name
 			-sd script dir

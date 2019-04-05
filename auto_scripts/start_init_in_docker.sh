@@ -128,7 +128,7 @@ fi
 # start the emulator
 echo "$(date)\tstart emulator\t${avd_name} $emulator_options" | tee -a $log_dir/in_docker_init.log
 $emulator_exec_path/emulator @${avd_name} $emulator_options &
-sleep 10
+sleep 20
 while :;do
   emulator_init_time=$(date +"%s")
   # install root certificate
