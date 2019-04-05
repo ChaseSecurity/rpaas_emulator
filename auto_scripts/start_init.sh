@@ -161,7 +161,7 @@ done
 sleep 10
 
 # run the initiation script in the docker container
-container_log_dir=$log_direct_dir
+container_log_dir="/rpaas_logs/$round_tag"
 options=" -ttr 80000 -ld $container_log_dir \
    -an $apk_name -pn $pkg_name " # time to run for the emulator
 if [ $is_cellular -gt 0 ];then
