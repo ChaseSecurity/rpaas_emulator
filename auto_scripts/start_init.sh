@@ -11,6 +11,8 @@ round_tag="luminati_$(date +'%Y-%m-%d')"
 is_mitm=0
 is_vpn=0
 is_cellular=0
+apk_name="com.fsm.audiodroid_2019-02-08_multiple_script_only-arm_v1.apk"
+pkg_name="com.fsm.audiodroid"
 # parse arguments
 while :; do
     case $1 in 
@@ -25,8 +27,28 @@ while :; do
 			-ld log dir
 			-ad apk dir
 			-rt round_tag
+            -an apk_name
+            -pn pkg_name
 			"
             exit
+            ;;
+        -pn|--pkg_name):
+            if [ "$2" ];then
+                pkg_name=$2
+                shift
+            else
+                "error when parsing arguments"
+                exit
+            fi
+            ;;
+        -an|--apk_name):
+            if [ "$2" ];then
+                apk_name=$2
+                shift
+            else
+                "error when parsing arguments"
+                exit
+            fi
             ;;
         -ic|--is_cellular)
             is_cellular=1
@@ -107,6 +129,8 @@ echo "script dir is $script_dir"
 echo "log dir is $log_dir"
 echo "log direct dir is $log_direct_dir"
 echo "apk dir is $apk_dir"
+echo "apk name is $apk_name"
+echo "pkg name is $pkg_name"
 
 container_id=$(sudo docker ps -q -a -f name=$container_name)
 if [ ${#container_id} -gt 0 ];then
@@ -138,7 +162,8 @@ sleep 10
 
 # run the initiation script in the docker container
 container_log_dir=$log_direct_dir
-options=" -ttr 80000 -ld $container_log_dir " # time to run for the emulator
+options=" -ttr 80000 -ld $container_log_dir \
+   -an $apk_name -pn $pkg_name " # time to run for the emulator
 if [ $is_cellular -gt 0 ];then
     options="$options -ic 1"
 fi
