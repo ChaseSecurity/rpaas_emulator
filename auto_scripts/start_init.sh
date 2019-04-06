@@ -1,5 +1,4 @@
 #!/bin/bash
-# this requires sudo permission 
 # start a container 
 container_name="arm_25"
 base_dir=$(cd $(dirname $0); pwd)
@@ -132,14 +131,14 @@ echo "apk dir is $apk_dir"
 echo "apk name is $apk_name"
 echo "pkg name is $pkg_name"
 
-container_id=$(sudo docker ps -q -a -f name=$container_name)
+container_id=$(docker ps -q -a -f name=$container_name)
 if [ ${#container_id} -gt 0 ];then
   echo "container exists, restart it"
-  sudo docker restart $container_id
+  docker restart $container_id
 else
   echo "no docker exists, create a new one"
   # start the container
-  container_id=$(sudo docker run -d -P --privileged \
+  container_id=$(docker run -d -P --privileged \
 	  --name $container_name \
 	  -v $script_dir:/rpaas_scripts \
 	  -v $log_dir:/rpaas_logs \
@@ -150,7 +149,7 @@ fi
 echo "container id is $container_id"
 sleep 30
 while :; do
-  avd_result=$(sudo docker exec -ti $container_id emulator -list-avds)
+  avd_result=$(docker exec -ti $container_id emulator -list-avds)
   if [ $? -eq 0 ] && [ ${#avd_result} -gt 1 ];then
 	echo "the created avd is $avd_result"
 	break
@@ -174,12 +173,10 @@ if [ $is_mitm -gt 0 ];then
     options="$options -im 1"
 fi
 echo "$(date)\tstart_init\t options for in-container script: $options" | tee -a $log_direct_dir/start_init.log
-sudo docker exec -ti -w /rpaas_scripts $container_id ./start_init_in_docker.sh $options 
+docker exec -ti -w /rpaas_scripts $container_id ./start_init_in_docker.sh $options 
 # rm vnc server lock
 if [ $? -eq 0 ];then
   echo "backup and clean the container and emulator"
   $script_dir/backup_clean_stop.sh -ld $log_dir -rt $round_tag -cn $container_name
-  #sudo docker exec -ti $container_id vncserver -kill :1
-  #sudo docker stop $container_id
 fi
 echo "quit the container"

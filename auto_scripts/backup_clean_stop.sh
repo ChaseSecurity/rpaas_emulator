@@ -71,13 +71,13 @@ echo "container name is $container_name"
 echo "script dir is $script_dir"
 echo "log dir is $log_dir"
 echo "round tag is is $round_tag"
-container_id=$(sudo docker ps | grep -Ei " ${container_name}$" | awk '{print $1}')
+container_id=$(docker ps | grep -Ei " ${container_name}$" | awk '{print $1}')
 echo "container id is $container_id"
-sudo docker exec -ti $container_id adb pull /sdcard/rpaas/. /rpaas_logs/${round_tag}/
-sudo docker exec -ti $container_id adb shell rm -r /sdcard/rpaas/
-sudo docker exec -ti $container_id adb emu kill
+docker exec -ti $container_id adb pull /sdcard/rpaas/. /rpaas_logs/${round_tag}/
+docker exec -ti $container_id adb shell rm -r /sdcard/rpaas/
+docker exec -ti $container_id adb emu kill
 sleep 60
-sudo docker exec -ti $container_id vncserver -kill :1
-sudo docker exec -ti $container_id ls -all /tmp/
-sudo docker stop $container_id
+docker exec -ti $container_id vncserver -kill :1
+docker exec -ti $container_id ls -all /tmp/
+docker stop $container_id
 echo "quit the container"
