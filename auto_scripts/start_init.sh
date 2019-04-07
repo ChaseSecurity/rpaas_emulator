@@ -173,10 +173,13 @@ if [ $is_mitm -gt 0 ];then
     options="$options -im 1"
 fi
 echo "$(date)\tstart_init\t options for in-container script: $options" | tee -a $log_direct_dir/start_init.log
-docker exec -ti -w /rpaas_scripts $container_id ./start_init_in_docker.sh $options 
+docker exec -ti $container_id /rpaas_scripts/start_init_in_docker.sh $options 
 # rm vnc server lock
 if [ $? -eq 0 ];then
   echo "backup and clean the container and emulator"
-  $script_dir/backup_clean_stop.sh -ld $log_dir -rt $round_tag -cn $container_name
+  #$script_dir/backup_clean_stop.sh -ld $log_dir -rt $round_tag -cn $container_name
+  docker exec -ti $container_id vncserver -kill :1
+  docker exec -ti $container_id ls -all /tmp/
+  docker stop $container_id
 fi
 echo "quit the container"

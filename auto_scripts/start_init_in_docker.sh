@@ -326,12 +326,12 @@ while :;do
   else
 	echo "quit because of error or external signal"
   fi
-  #adb shell am force-stop $pkg_name
+  adb shell am force-stop $pkg_name
   ## backup logs
-  #adb pull /sdcard/rpaas/. $log_dir/
-  #adb shell rm -r /sdcard/rpaas/
-  #adb shell ls -all /sdcard/rpaas/
-  #adb emu kill
-  #sleep 60
+  adb pull /sdcard/rpaas/. $log_dir/
+  adb shell rm -r /sdcard/rpaas/
+  adb shell ls -all /sdcard/rpaas/
+  adb emu kill
+  sleep 60
   break
 done
