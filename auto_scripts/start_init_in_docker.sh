@@ -328,6 +328,7 @@ while :;do
   fi
   adb shell am force-stop $pkg_name
   ## backup logs
+  echo "back up to dir $log_dir"
   adb pull /sdcard/rpaas/. $log_dir/
   adb shell rm -r /sdcard/rpaas/
   adb shell ls -all /sdcard/rpaas/

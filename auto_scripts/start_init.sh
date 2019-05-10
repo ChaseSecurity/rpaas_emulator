@@ -131,9 +131,9 @@ echo "apk dir is $apk_dir"
 echo "apk name is $apk_name"
 echo "pkg name is $pkg_name"
 
-container_id=$(docker ps -q -a -f name=$container_name)
+container_id=$(docker ps -q -a -f name="^/$container_name$")
 if [ ${#container_id} -gt 0 ];then
-  echo "container exists, restart it"
+  echo "container exists $container_id, restart it"
   docker restart $container_id
 else
   echo "no docker exists, create a new one"
