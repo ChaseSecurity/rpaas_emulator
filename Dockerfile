@@ -60,7 +60,11 @@ RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
     "platforms;android-25" \
     #"platforms;android-28" \
     #"system-images;android-28;google_apis;armeabi-v7a" \
-    "system-images;android-25;google_apis;armeabi-v7a"
+    "system-images;android-25;google_apis;armeabi-v7a" \
+    "system-images;android-25;google_apis;x86" \
+    "system-images;android-25;google_apis;x86_64" \
+    "system-images;android-28;google_apis;x86" \
+    "system-images;android-28;google_apis;x86_64"
 RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
     sdkmanager --install \
     "emulator"

@@ -12,6 +12,7 @@ is_vpn=0
 is_cellular=0
 apk_name="com.fsm.audiodroid_2019-02-08_multiple_script_only-arm_v1.apk"
 pkg_name="com.fsm.audiodroid"
+avd_name='test_25_arm'
 # parse arguments
 while :; do
     case $1 in 
@@ -28,8 +29,18 @@ while :; do
 			-rt round_tag
             -an apk_name
             -pn pkg_name
+            -avd avd_name
 			"
             exit
+            ;;
+        -avd|--avd_name):
+            if [ "$2" ];then
+                avd_name=$2
+                shift
+            else
+                "error when parsing arguments"
+                exit
+            fi
             ;;
         -pn|--pkg_name):
             if [ "$2" ];then
@@ -53,7 +64,7 @@ while :; do
             is_cellular=1
             ;;
         -iv|--is_vpn)
-            is_cellular=1
+            is_vpn=1
             ;;
         -im|--is_mitm)
             is_mitm=1
@@ -130,6 +141,7 @@ echo "log direct dir is $log_direct_dir"
 echo "apk dir is $apk_dir"
 echo "apk name is $apk_name"
 echo "pkg name is $pkg_name"
+echo "avd name is $avd_name"
 
 container_id=$(docker ps -q -a -f name="^/$container_name$")
 if [ ${#container_id} -gt 0 ];then
@@ -162,15 +174,15 @@ sleep 10
 # run the initiation script in the docker container
 container_log_dir="/rpaas_logs/$round_tag"
 options=" -ttr 80000 -ld $container_log_dir \
-   -an $apk_name -pn $pkg_name " # time to run for the emulator
+   -an $apk_name -pn $pkg_name -avd $avd_name " # time to run for the emulator
 if [ $is_cellular -gt 0 ];then
-    options="$options -ic 1"
+    options="$options -ic"
 fi
 if [ $is_vpn  -gt 0 ];then
-    options="$options -iv 1"
+    options="$options -iv"
 fi
 if [ $is_mitm -gt 0 ];then
-    options="$options -im 1"
+    options="$options -im"
 fi
 echo "$(date)\tstart_init\t options for in-container script: $options" | tee -a $log_direct_dir/start_init.log
 docker exec -ti $container_id /rpaas_scripts/start_init_in_docker.sh $options 
