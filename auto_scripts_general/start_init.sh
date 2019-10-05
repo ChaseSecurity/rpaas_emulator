@@ -150,11 +150,14 @@ if [ ${#container_id} -gt 0 ];then
 else
   echo "no docker exists, create a new one"
   # start the container
+  # priviledged will allow us to use hardware acceleration for android vm
   container_id=$(docker run -d -P --privileged \
+      --userns=host \
 	  --name $container_name \
 	  -v $script_dir:/rpaas_scripts \
 	  -v $log_dir:/rpaas_logs \
 	  -v $apk_dir:/rpaas_apks \
+      --storage-opt size=100G \
 	  $docker_image \
   )
 fi

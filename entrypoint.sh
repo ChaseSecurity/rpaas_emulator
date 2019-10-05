@@ -8,7 +8,7 @@
 #/usr/bin/vncserver &
 #/usr/local/bin/watchdog.sh &
 #sleep 10
-
+chown -R root:root /
 # Detect ip and forward ADB ports outside to outside interface
 ip=$(ifconfig  | grep 'inet '| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $2}')
 echo $ip

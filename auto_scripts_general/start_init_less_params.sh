@@ -60,7 +60,7 @@ if [ $is_mitm -gt 0 ];then
     container_name="${container_name}_mitm"
     extra_options="$extra_options -im"
 fi
-AVD="test_25_x86"
+AVD="test_25_x86_64"
 echo "provider name is $provider_name"
 echo "apk dir is $apk_dir"
 echo "apk name is $apk_name"

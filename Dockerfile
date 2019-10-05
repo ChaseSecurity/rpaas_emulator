@@ -7,13 +7,13 @@ MAINTAINER xianghang <xianghangmi@gmail.com>
 
 # Specially for SSH access and port redirection
 ENV ROOTPASSWORD rpaas
+ENV USER root
 
 # Expose ADB, ADB control and VNC ports
 EXPOSE 22
 EXPOSE 5037
 EXPOSE 5554
 EXPOSE 5555
-EXPOSE 5900
 EXPOSE 80
 EXPOSE 443
 
@@ -57,14 +57,36 @@ ENV PATH $PATH:$ANDROID_HOME/tools/bin
 RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
     sdkmanager --install \
     "platform-tools" \
-    "platforms;android-25" \
+    "platforms;android-25"
+    #"platforms;android-28" \
+    #"system-images;android-28;google_apis;armeabi-v7a" \
+    # "system-images;android-25;google_apis;armeabi-v7a" \
+    # "system-images;android-25;google_apis;x86" \
+    # "system-images;android-25;google_apis;x86_64"
+    #"system-images;android-28;google_apis;x86" \
+    #"system-images;android-28;google_apis;x86_64"
+RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
+    sdkmanager --install \
+    #"platform-tools" \
+    #"platforms;android-25" \
     #"platforms;android-28" \
     #"system-images;android-28;google_apis;armeabi-v7a" \
     "system-images;android-25;google_apis;armeabi-v7a" \
-    "system-images;android-25;google_apis;x86" \
-    "system-images;android-25;google_apis;x86_64" \
-    "system-images;android-28;google_apis;x86" \
-    "system-images;android-28;google_apis;x86_64"
+    # "system-images;android-25;google_apis;x86" \
+    "system-images;android-25;google_apis;x86_64"
+    #"system-images;android-28;google_apis;x86" \
+    #"system-images;android-28;google_apis;x86_64"
+# RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
+#     sdkmanager --install \
+#     #"platform-tools" \
+#     #"platforms;android-25" \
+#     #"platforms;android-28" \
+#     #"system-images;android-28;google_apis;armeabi-v7a" \
+#     "system-images;android-25;google_apis;armeabi-v7a"
+#     # "system-images;android-25;google_apis;x86" \
+#     # "system-images;android-25;google_apis;x86_64"
+#     #"system-images;android-28;google_apis;x86" \
+#     #"system-images;android-28;google_apis;x86_64"
 RUN ( sleep 4 && while [ 1 ]; do sleep 1; echo y; done ) | \
     sdkmanager --install \
     "emulator"
