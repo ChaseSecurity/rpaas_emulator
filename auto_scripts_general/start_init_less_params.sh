@@ -23,6 +23,7 @@ fi
 result_dir=$(cd $result_dir; pwd)
 is_mitm=0
 is_cellular=0
+is_arm=0
 shift 3
 while :; do
     case $1 in 
@@ -40,15 +41,18 @@ while :; do
         -im|--is_mitm)
             is_mitm=1
             ;;
+        -ia|--is_arm)
+            is_arm=1
+            ;;
         *)
             break
     esac
     shift
 done
-container_name="${provider_name}_manual_study_${apk_hash}"
+container_name="${provider_name}_manual_study_${pkg_name}_${apk_hash}"
 log_dir=$result_dir
 curr_date=$(date +"%Y-%m-%d")
-round_tag="${provider_name}_manual_study_${curr_date}_${apk_hash}"
+round_tag="${provider_name}_manual_study_${curr_date}_${pkg_name}_${apk_hash}"
 extra_options=""
 if [ $is_cellular -gt 0 ];then
     round_tag="${round_tag}_cellular"
@@ -60,7 +64,12 @@ if [ $is_mitm -gt 0 ];then
     container_name="${container_name}_mitm"
     extra_options="$extra_options -im"
 fi
+# default to be x86 64
 AVD="test_25_x86_64"
+if [ $is_arm -gt 0 ];then
+    AVD="test_25_arm"
+fi
+
 echo "provider name is $provider_name"
 echo "apk dir is $apk_dir"
 echo "apk name is $apk_name"

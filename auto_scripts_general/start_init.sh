@@ -196,5 +196,6 @@ if [ $? -eq 0 ];then
   docker exec -ti $container_id vncserver -kill :1
   docker exec -ti $container_id ls -all /tmp/
   docker stop $container_id
+  docker rm -f $container_id
 fi
 echo "quit the container"
