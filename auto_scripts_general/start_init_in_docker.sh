@@ -113,7 +113,7 @@ run_start_time=$(date +"%s")
 emulator_exec_path="/usr/local/android-sdk/tools"
 emulator_options=" -gpu swiftshader_indirect -noaudio \
     -no-boot-anim -selinux permissive -writable-system \
-	-memory 1536 \
+	-memory 2048 \
     -tcpdump $log_dir/tcpdump_emulator.cap"
 if [ $is_mitm -gt 0 ];then
     echo "start mitmdump"
@@ -235,6 +235,10 @@ while :;do
       fi
   fi
   if [ ${#is_install} -lt 1 ];then
+      if [ $is_arm -gt 0 ];then
+          echo "sleep before next step for arm"
+          sleep 360
+      fi
 	  retry_limit=5 # try 3 times for apk installation
 	  current=1
 	  install_success=0

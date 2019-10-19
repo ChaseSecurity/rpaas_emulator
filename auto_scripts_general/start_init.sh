@@ -13,6 +13,7 @@ is_cellular=0
 apk_name="com.fsm.audiodroid_2019-02-08_multiple_script_only-arm_v1.apk"
 pkg_name="com.fsm.audiodroid"
 avd_name='test_25_arm'
+time_to_run=80000
 # parse arguments
 while :; do
     case $1 in 
@@ -30,12 +31,22 @@ while :; do
             -an apk_name
             -pn pkg_name
             -avd avd_name
+            -ttr time_to_run
 			"
             exit
             ;;
         -avd|--avd_name):
             if [ "$2" ];then
                 avd_name=$2
+                shift
+            else
+                "error when parsing arguments"
+                exit
+            fi
+            ;;
+        -ttr|--time_to_run):
+            if [ "$2" ];then
+                time_to_run=$2
                 shift
             else
                 "error when parsing arguments"
@@ -176,7 +187,7 @@ sleep 10
 
 # run the initiation script in the docker container
 container_log_dir="/rpaas_logs/$round_tag"
-options=" -ttr 80000 -ld $container_log_dir \
+options=" -ttr $time_to_run -ld $container_log_dir \
    -an $apk_name -pn $pkg_name -avd $avd_name " # time to run for the emulator
 if [ $is_cellular -gt 0 ];then
     options="$options -ic"

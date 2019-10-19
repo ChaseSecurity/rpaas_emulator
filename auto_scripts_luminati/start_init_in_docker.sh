@@ -107,7 +107,7 @@ emulator_exec_path="/usr/local/android-sdk/tools"
 avd_name="test"
 emulator_options=" -gpu swiftshader_indirect -noaudio \
     -no-boot-anim -selinux permissive -writable-system \
-	-memory 2048 \
+	-memory 3064 \
     -tcpdump $rpaas_log/tcpdump_emulator.cap"
 if [ $is_mitm -gt 0 ];then
     echo "start mitmdump"

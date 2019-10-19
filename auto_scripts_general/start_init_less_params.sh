@@ -24,6 +24,7 @@ result_dir=$(cd $result_dir; pwd)
 is_mitm=0
 is_cellular=0
 is_arm=0
+time_to_run=80000
 shift 3
 while :; do
     case $1 in 
@@ -43,6 +44,15 @@ while :; do
             ;;
         -ia|--is_arm)
             is_arm=1
+            ;;
+        -ttr|--time_to_run):
+            if [ "$2" ];then
+                time_to_run=$2
+                shift
+            else
+                "error when parsing arguments"
+                exit
+            fi
             ;;
         *)
             break
@@ -80,6 +90,7 @@ echo "result dir is $result_dir"
 echo "is cellular: $is_cellular"
 echo "is mitm: $is_mitm"
 echo "round_tag is $round_tag"
+echo "time to run is $time_to_run seconds"
 $script_dir/start_init.sh \
      -cn $container_name \
      -ld $result_dir \
@@ -88,5 +99,6 @@ $script_dir/start_init.sh \
      -pn $pkg_name \
      -avd $AVD \
      -rt $round_tag \
+     -ttr $time_to_run \
      $extra_options
 
