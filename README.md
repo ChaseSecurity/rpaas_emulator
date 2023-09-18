@@ -19,3 +19,13 @@ Given the Docker facilities installed, the next step is to create a Docker image
 
 ## Execute an Android APK file
 
+*auto_script_example.sh* presents an example regarding how to execute a mobile proxy Android app in a Docker container. 
+More configurations can be specified, as illustrated in *auto_scripts_general/start_init.sh*. 
+
+```bash
+# APK_TAG is used to distinguish resulting logs of different execution rounds
+./auto_script_example.sh APK_FILE APK_TAG [RESULT_DIR]
+```
+
+Also, a customized script suite is provided (*auto_scripts_luminati*) for running proxy apps of Luminati,
+due to their unique technical mechanisms and the resulting challenges for running and profiling them.
