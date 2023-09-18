@@ -30,6 +30,7 @@ RUN apt-get -y update && \
 RUN apt-get -y update && \
     apt-get -y install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils
 # Install android sdk
+# TODO the ANDROID_SDK_VERSION is subject to updates 
 # download and install Android SDK
 # https://developer.android.com/studio/#downloads
 ARG ANDROID_SDK_VERSION=4333796

@@ -29,7 +29,8 @@ RUN apt-get -y update && \
 # install kvm
 RUN apt-get -y update && \
     apt-get -y install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils
-# Install android sdk
+# Install android sdk as part of the docker image
+# TODO the ANDROID_SDK_VERSION is subject to updates 
 # download and install Android SDK
 # https://developer.android.com/studio/#downloads
 ARG ANDROID_SDK_VERSION=4333796
